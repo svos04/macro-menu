@@ -4,13 +4,7 @@ A privacy-first Chrome extension that reads restaurant menus in the browser and 
 
 **Status: v0.1.0 prototype.** It runs entirely on your machine, makes no network requests of its own, and has no accounts. It is an early prototype, not a finished product. See [Current limitations and roadmap](#current-limitations-and-roadmap) for an honest account of what is rough.
 
-<!--
-TODO (Sofie): add a screenshot or GIF here.
-Suggested capture: open the side panel on a Sweetgreen menu, pick the "Cut" goal,
-and grab the ranked cards showing scores, macros, and explanations.
-Save it as docs/screenshot.png (create the docs/ folder) and the line below will render it.
--->
-![MacroMenu side panel ranking a menu (screenshot to be added)](docs/screenshot.png)
+(docs/screenshot.png)
 
 ## How it works
 
@@ -26,7 +20,7 @@ When you open the side panel on a restaurant page, MacroMenu reads the rendered 
 - **Auditability.** The same input always produces the same output, which is what makes the test suite meaningful and regressions catchable.
 - **Cost.** No API keys and no per-request billing, so the tool stays free to run.
 
-AI-assisted parsing and macro estimation are planned for later versions to improve accuracy where the rules fall short. The goal of starting deterministic was to get the scoring model, the explanations, and the interface right against data fully under control, then layer AI in behind the same interface. This is about explainability and cost, not a stance against LLMs.
+AI-assisted parsing and macro estimation are planned for later versions to improve accuracy where the rules fall short. The goal of starting deterministic was to get the scoring model, the explanations, and the interface right against data fully under control, then layer AI in behind the same interface.
 
 <details>
 <summary><strong>Under the hood</strong> (engineering notes, for the curious)</summary>
@@ -85,7 +79,7 @@ MacroMenu is validated two ways.
 
 **Automated regression suite.** `npm test` runs a dependency-free suite (Node's built-in runner) covering the parsing and scoring edge cases that real menus exposed. It includes DOM blocks captured verbatim from live sites, including Sweetgreen and Panera, plus fixtures drawn from Chipotle, True Food Kitchen, Fratellino's, Celebration Restaurant, and Nice Matin.
 
-**Manual testing against live menus.** During development the extension was run by hand against real restaurant sites, including Sweetgreen and Just Salad, to confirm it pulls the right dish title, description, and published nutrition facts. Coverage so far is a limited set of sites, not an exhaustive sweep.
+**Manual testing against live menus.** During development the extension was run by hand against real restaurant sites, including Sweetgreen, Just Salad, Chili's, and many more to confirm it pulls the right dish title, description, and published nutrition facts. Coverage so far is a limited set of sites, not an exhaustive sweep.
 
 **Macro accuracy work is ongoing.** Restaurant nutrition PDFs (Mendocino Farms among them) are being cross-referenced against the estimator to tighten the numbers, and more are being added over time.
 
@@ -95,16 +89,16 @@ This is a v0.1.0 prototype. On supported sites it does real work end-to-end: it 
 
 **What is weak or missing today:**
 
-- **Estimation accuracy is the weakest part.** When a page does not publish its own macros, MacroMenu estimates from local assumptions. Those estimates are often close but not exact, and they tend to underestimate calories and protein. This is the piece I am least satisfied with. Treat estimated meals as guidance, not a food log.
-- **Site coverage is uneven.** The DOM reader does well on the sites I have tested (Sweetgreen is a strong case, and published nutrition facts come through reliably when a page provides them), but it does not read every site's markup correctly, and I have not tested it broadly. I am not yet fully confident outside the sites I have tried.
-- **PDF menus are not readable in the browser yet.** The side panel currently reads only the rendered DOM of the active tab. The extraction engine does have a PDF path, exercised by the tests and the `test:menu` CLI, but it is not wired into the panel, so pointing the extension at a PDF menu in the browser does not work.
+- **Estimation accuracy is a weak point.** When a page does not publish its own macros, MacroMenu estimates from local assumptions. Those estimates are often close but not exact, and they tend to underestimate calories and protein. I am working to build a stronger data set to help better these estimates by testing it against more, diverse menus, but this has been a lengthly process.
+- **Site coverage is uneven.** The DOM reader does well on the sites I have tested (Sweetgreen is a strong case, and published nutrition facts come through reliably when a page provides them), but it does not read every site's markup correctly, and I have not tested it as broadly as I would like. I am not yet fully confident outside the sites I have tried.
+- **PDF menus are not readable in the browser yet.** The side panel currently reads only the rendered DOM of the active tab. The extraction engine does have a PDF path, exercised by the tests and the `test:menu` CLI, but it is not wired into the panel, so pointing the extension at a PDF menu in the browser does not work. A lot of restaurants provide their menu in PDF form, so I would like to get this working ASAP.
 - **No OCR.** A menu that is a single scanned image is flagged as needing OCR, not guessed at.
 
-**If I started over:** I would have spent more time up front on using an LLM API for macro estimation rather than hand-building a nutrition database. That is the direction I want to take accuracy.
+**If I started over:** I would have spent more time up front on using an LLM API for macro estimation rather than hand-building a nutrition database. That is the direction I would like to take accuracy, but from a cost perspective, it may be hard to connect an LLM to the extension.
 
 **Roadmap for v0.2 and beyond:**
 
-- Move macro estimation to an AI-assisted approach to improve accuracy where the local table falls short.
+- Investigate if it's worth it to move macro estimation to an AI-assisted approach to improve accuracy, since the local table often falls short.
 - Wire PDF menu reading into the extension.
 - Support a wider range of restaurant websites.
 - Keep cross-referencing restaurant nutrition PDFs into the estimator to tighten the numbers. This work is ongoing.
