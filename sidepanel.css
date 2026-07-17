@@ -1,0 +1,360 @@
+/* sidepanel.css
+   Calm, modern consumer-wellness styling for the MacroMenu side panel.
+   Tone: useful and reassuring, not clinical. */
+
+:root {
+  --bg: #f7f9f8;
+  --surface: #ffffff;
+  --ink: #1f2a28;
+  --ink-soft: #5c6b67;
+  --accent: #2f9e77;
+  --accent-soft: #e5f4ee;
+  --border: #e6ebe9;
+  --shadow: 0 1px 3px rgba(31, 42, 40, 0.08);
+  --radius: 12px;
+
+  /* The color Chrome paints behind the panel content. Matching it here means
+     the inset corners below read as intentional rather than as a gap. */
+  --frame: #ffffff;
+  --panel-radius: 16px;
+  --panel-inset: 8px;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Rounding a Chrome side panel, honestly.
+   The panel's outer window frame is drawn by Chrome, not by us — no CSS can
+   round it, and `border-radius` on <body> is ignored by the frame. So instead
+   of fighting that, we inset the content by --panel-inset and round THAT.
+   The result is a rounded surface floating inside the panel, which renders
+   identically whether or not the host Chrome rounds its own frame. */
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--frame);
+}
+
+/* Unlike a popup, a side panel is sized by Chrome and the user can drag it
+   wider or narrower. So we fill the space we're given rather than pinning a
+   width/height, and let the layout reflow. `overflow: hidden` keeps the frame
+   itself stationary — only .results scrolls. */
+body {
+  overflow: hidden;
+  color: var(--ink);
+}
+
+.app {
+  margin: var(--panel-inset);
+  height: calc(100% - var(--panel-inset) * 2);
+  padding: 14px;
+  background: var(--bg);
+  border-radius: var(--panel-radius);
+  /* Clip the scrolling list to the rounded corners. */
+  overflow: hidden;
+
+  /* Column layout so the header and goal picker stay put while only the
+     results list scrolls. If the whole body scrolled instead, the rounded top
+     corners would slide out of view on the first scroll. */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Fixed regions: everything except .results holds its size while the list scrolls. */
+.header,
+.goal-picker,
+.results-header,
+.footer {
+  flex-shrink: 0;
+}
+
+/* Header */
+.header {
+  margin-bottom: 14px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand-mark {
+  font-size: 22px;
+}
+.brand-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.tagline {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+/* Goal picker */
+.goal-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.goal-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s, transform 0.05s;
+}
+.goal-btn:hover {
+  border-color: var(--accent);
+}
+.goal-btn:active {
+  transform: scale(0.98);
+}
+.goal-btn.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.goal-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.goal-sub {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Results header */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.results-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.copy-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.copy-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+.copy-btn.is-copied {
+  background: var(--accent);
+  color: #fff;
+}
+
+.status {
+  flex-shrink: 0;
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--ink-soft);
+}
+
+/* Results list — the only scrolling region in the panel. */
+.results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  flex: 1;
+  min-height: 0; /* lets a flex child actually shrink and scroll */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Stop Chrome from restoring the previous scroll offset when we swap the
+     cards out on a re-rank. sidepanel.js resets scrollTop; this keeps it reset. */
+  overflow-anchor: none;
+  /* Breathing room so card borders don't sit flush against the scrollbar. */
+  padding-right: 4px;
+}
+
+/* Slim, unobtrusive scrollbar that matches the palette. */
+.results::-webkit-scrollbar {
+  width: 6px;
+}
+.results::-webkit-scrollbar-thumb {
+  background: #d6ded9;
+  border-radius: 999px;
+}
+.results::-webkit-scrollbar-thumb:hover {
+  background: #c2ccc7;
+}
+.results::-webkit-scrollbar-track {
+  background: transparent;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0; /* cards keep their height instead of squashing to fit */
+}
+.empty-card {
+  box-shadow: none;
+}
+.card-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.card-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+/* Badges */
+.badges {
+  display: flex;
+  flex-wrap: wrap; /* stack badges rather than breaking their text */
+  gap: 5px;
+  margin-top: 8px;
+}
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--ink-soft);
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+/* Only "Best Match" gets the accent — if every badge were emphasized, none
+   would be. */
+.badge-best {
+  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+/* "Side dish" is a warning-toned, filled chip: a side is not a meal, and the
+   amber (distinct from the green accent) is meant to catch the eye before the
+   macros do. */
+.badge-side {
+  color: #7a4a00;
+  background: #fbeccb;
+  border-color: #f0d089;
+}
+
+/* 2x2 grid rather than a flex wrap: four chips always land in a stable,
+   intentional block instead of a ragged 3-then-1 row. */
+.macros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin: 8px 0;
+}
+.macro {
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0; /* grid items default to min-content; let them actually shrink */
+}
+.macro strong {
+  color: var(--ink);
+  font-weight: 600;
+  /* Never break a value like "620 cal" across two lines. */
+  white-space: nowrap;
+}
+
+/* A side panel can be dragged narrow. Below this width two macro chips per row
+   no longer fit without the value wrapping, so stack them one per row. */
+@media (max-width: 340px) {
+  .macros {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Very narrow panel (Chrome allows roughly 240px). The goal subtitles are
+   flavor text, not information — drop them rather than let "Lean & light"
+   break across three lines. The Cut/Maintain/Bulk titles still carry the meaning. */
+@media (max-width: 300px) {
+  .goal-sub {
+    display: none;
+  }
+  .goal-btn {
+    align-items: center;
+    padding: 12px 6px;
+  }
+}
+.explanation {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 6px 0 8px;
+}
+.labels {
+  display: flex;
+  flex-wrap: wrap; /* stack the badges rather than breaking their text */
+  gap: 6px;
+}
+.label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.label-source {
+  background: #eef1f5;
+  color: #55606b;
+}
+.label-confidence {
+  background: var(--accent-soft);
+  color: #1f7a5a;
+}
+
+/* Footer — pinned to the bottom of the frame, below the scroll region. */
+.footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer p {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin: 0;
+}

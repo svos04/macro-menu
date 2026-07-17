@@ -1,0 +1,11 @@
+{
+  "name": "macromenu",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first Chrome extension that ranks restaurant meals against your fitness goal.",
+  "type": "module",
+  "scripts": {
+    "test:menu": "node scripts/test-menu-extraction.js",
+    "test": "node --test test/*.test.js"
+  }
+}

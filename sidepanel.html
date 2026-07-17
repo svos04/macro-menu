@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MacroMenu</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">🥗</span>
+          <h1 class="brand-name">MacroMenu</h1>
+        </div>
+        <p class="tagline">Find the best fit for your goal.</p>
+      </header>
+
+      <section class="goal-picker" aria-label="Choose your goal">
+        <button class="goal-btn" data-goal="cut" type="button">
+          <span class="goal-title">Cut</span>
+          <span class="goal-sub">Lean &amp; light</span>
+        </button>
+        <button class="goal-btn" data-goal="maintain" type="button">
+          <span class="goal-title">Maintain</span>
+          <span class="goal-sub">Balanced</span>
+        </button>
+        <button class="goal-btn" data-goal="bulk" type="button">
+          <span class="goal-title">Bulk</span>
+          <span class="goal-sub">Fuel &amp; build</span>
+        </button>
+      </section>
+
+      <section class="results-header">
+        <h2 class="results-title">Top picks</h2>
+        <button id="copy-btn" class="copy-btn" type="button">Copy Results</button>
+      </section>
+
+      <p id="status" class="status" role="status">Reading this page…</p>
+      <ul id="results" class="results" aria-live="polite"></ul>
+
+      <footer class="footer">
+        <p id="source-note">Prototype · Ranked from the current page</p>
+      </footer>
+    </div>
+
+    <!-- Loaded as an ES module so services/utils can use import/export. -->
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Secrets & environment — never commit these
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build output (none yet in the prototype)
+dist/
+build/
+
+# Local tooling / AI-agent artifacts — not part of the extension
+.playwright-mcp/
+.claude/settings.local.json
+.codex/
