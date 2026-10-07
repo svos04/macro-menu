@@ -15,12 +15,7 @@ import { SAMPLE_MENU } from "./data/sampleMenu.js";
 import { snapshotRenderedPage } from "./content/pageSnapshot.js";
 import { extractMenu, toRankableMeals } from "./services/menuExtractionService.js";
 import { rankMeals, BADGES } from "./services/scoringService.js";
-import {
-  grams,
-  calories,
-  scoreOutOf100,
-  resultsToPlainText
-} from "./utils/formatters.js";
+import { grams, calories, scoreOutOf100 } from "./utils/formatters.js";
 
 // Current UI state.
 let currentGoal = CONFIG.DEFAULT_GOAL;
@@ -274,24 +269,6 @@ function wireGoalButtons() {
   });
 }
 
-function wireCopyButton() {
-  const btn = document.getElementById("copy-btn");
-  btn.addEventListener("click", async () => {
-    const text = resultsToPlainText(currentRanked, currentGoal);
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = "Copied!";
-      btn.classList.add("is-copied");
-      setTimeout(() => {
-        btn.textContent = "Copy Results";
-        btn.classList.remove("is-copied");
-      }, 1500);
-    } catch {
-      // Clipboard may be blocked; leave the button as-is.
-    }
-  });
-}
-
 // ---------------------------------------------------------------------------
 // Init
 // ---------------------------------------------------------------------------
@@ -302,7 +279,6 @@ async function init() {
   currentGoal = await loadGoal();
   renderGoalButtons();
   wireGoalButtons();
-  wireCopyButton();
   renderResults();
   await loadMealsFromCurrentTab();
   renderResults();

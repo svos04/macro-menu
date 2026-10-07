@@ -142,6 +142,17 @@ export const WEIGHTS = {
   balance: 0.125
 };
 
+// Exponent applied to the score (0..1) after penalties, before caps.
+//
+// The components are deliberately demanding — EXCELLENT_PROTEIN_RATIO sits
+// above what almost any restaurant meal reaches — which is right for ordering
+// meals but left the displayed numbers skewed low: a genuinely good pick read
+// as 60/100. A power curve under 1 lifts the middle of the range toward the
+// top while keeping 0 at 0 and 100 at 100. It is monotonic, so it never
+// changes which meal ranks above which; caps still apply after it, unchanged.
+// 1.0 turns the curve off.
+export const SCORE_CURVE = 0.65;
+
 // ---------------------------------------------------------------------------
 // Goal presets
 // ---------------------------------------------------------------------------
@@ -507,7 +518,10 @@ export function scoreMeal(meal, goal, weights = WEIGHTS) {
   score *= 100;
 
   const penalties = applyPenalties(score, meal, goal);
-  const caps = applyCaps(penalties.score, meal);
+  // Curve after penalties so it can't reorder two meals, and before caps so
+  // every guardrail ceiling still means exactly what it says.
+  const curved = 100 * Math.pow(clamp01(penalties.score / 100), SCORE_CURVE);
+  const caps = applyCaps(curved, meal);
 
   return {
     ...meal,

@@ -317,6 +317,42 @@ describe("macroEstimator: fajitas keep their tortillas", () => {
   });
 });
 
+describe("macroEstimator: a half portion is half the dish", () => {
+  const CAPRESE = {
+    dishName: "Chicken Pesto Caprese",
+    description: "Grilled chicken, fresh mozzarella, tomatoes, basil pesto, on toasted ciabatta",
+    section: "Sandwiches"
+  };
+
+  test("a leading 1/2 halves the estimate", () => {
+    const full = estimateMacros(CAPRESE).estimatedMacros;
+    const half = estimateMacros({ ...CAPRESE, dishName: `1/2 ${CAPRESE.dishName}` });
+    assert.ok(half.estimatedMacros.calories < full.calories * 0.55);
+    assert.ok(half.estimatedMacros.protein_g < full.protein_g * 0.55);
+    assert.ok(half.assumptions.some((a) => /half portion/i.test(a)));
+  });
+
+  test("½ and Half mark a half portion too", () => {
+    for (const name of ["½ Turkey Sandwich", "Half Caesar Salad", "Half Chicken Sandwich"]) {
+      assert.equal(detectPreparationSignals(name).halfPortion, true, name);
+    }
+  });
+
+  test("a half-pound patty or a half chicken is a full entree", () => {
+    for (const name of ["1/2 lb Burger", "Half Chicken", "Half Rotisserie Chicken", "1/2 Rack of Ribs"]) {
+      assert.equal(detectPreparationSignals(name).halfPortion, false, name);
+    }
+  });
+
+  test("calories printed beside a half portion are used as-is, not halved", () => {
+    const half = estimateMacros(
+      { ...CAPRESE, dishName: `1/2 ${CAPRESE.dishName}` },
+      { publishedMacros: { calories: 340 } }
+    );
+    assert.equal(half.estimatedMacros.calories, 340);
+  });
+});
+
 describe("preparationAdjustments", () => {
   const base = { calories: 400, protein_g: 40, carbs_g: 30, fat_g: 10 };
 

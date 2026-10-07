@@ -145,9 +145,35 @@ function parseStatedProteinOz(dishName, description) {
 }
 
 /**
+ * A half portion of a dish that is also sold whole — Panera's "1/2 Chicken
+ * Pesto Caprese" next to the full sandwich. Read from the NAME only, at its
+ * start, because that is where menus mark the smaller size.
+ *
+ * Not every leading "1/2" or "half" means a smaller plate. "1/2 lb Burger" is a
+ * patty weight, and "Half Rotisserie Chicken" or "Half Rack of Ribs" is a full
+ * entree named for the cut. Those are left alone.
+ */
+const HALF_PORTION_PREFIX = /^\s*(?:1\/2|½|half)\s+(.+)$/i;
+const HALF_IS_A_WEIGHT = /^(?:lb|lbs|pound|oz|ounces?|dozen|kg)\b/i;
+const HALF_IS_THE_CUT = [
+  // "Half Chicken", "Half Rotisserie Chicken" — the bird is the whole name.
+  /^(?:(?:rotisserie|roast(?:ed)?|smoked|grilled|fried|bbq|jerk|herb)\s+)*(?:chicken|bird)$/i,
+  // "1/2 Rack of Ribs", "Half Slab", "Half Rack Baby Back Ribs".
+  /^(?:rack|slab)\b|\bribs?\b/i
+];
+
+function isHalfPortion(dishName) {
+  const match = dishName.match(HALF_PORTION_PREFIX);
+  if (!match) return false;
+  const rest = match[1].trim();
+  return !HALF_IS_A_WEIGHT.test(rest) && !HALF_IS_THE_CUT.some((re) => re.test(rest));
+}
+
+/**
  * @param {string} dishName
  * @param {string} [description]
- * @returns {Record<keyof typeof SIGNAL_PATTERNS, boolean> & {statedProteinOz: number|null}}
+ * @returns {Record<keyof typeof SIGNAL_PATTERNS, boolean> &
+ *   {statedProteinOz: number|null, halfPortion: boolean}}
  */
 export function detectPreparationSignals(dishName, description = "") {
   const text = `${dishName} ${description}`;
@@ -156,6 +182,7 @@ export function detectPreparationSignals(dishName, description = "") {
     signals[name] = re.test(text);
   }
   signals.statedProteinOz = parseStatedProteinOz(dishName, description);
+  signals.halfPortion = isHalfPortion(dishName);
   return signals;
 }
 

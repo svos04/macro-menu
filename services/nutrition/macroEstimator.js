@@ -159,6 +159,15 @@ export function estimateMacros(item, options = {}) {
   const adjusted = applyMacroAdjustments(costed.macros, signals, costed.costedKeys);
   assumptions.push(...adjusted.assumptions);
 
+  // A "1/2 …" item is the same dish at half size. Halve the finished estimate
+  // rather than each slot, so every assumption above still describes the whole
+  // dish it was made about. Published macros are applied after this, since a
+  // number printed beside a half portion already describes the half.
+  if (signals.halfPortion) {
+    for (const key of Object.keys(adjusted.macros)) adjusted.macros[key] /= 2;
+    assumptions.push("Halved the estimate — the name marks this as a half portion.");
+  }
+
   const proteinDetected = matches.some((m) => m.definition.slot === "protein");
   const macroConfidence = scoreMacroConfidence({
     dishName,

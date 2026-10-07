@@ -4,7 +4,13 @@ A privacy-first Chrome extension that reads restaurant menus in the browser and 
 
 **Status: v0.1.0 prototype.** It runs entirely on your machine, makes no network requests of its own, and has no accounts. It is an early prototype, not a finished product. See [Current limitations and roadmap](#current-limitations-and-roadmap) for an honest account of what is rough.
 
-![MacroMenu side panel ranking a menu](docs/screenshot.png)
+## Website WITH Macros Listed
+
+(docs/Sweetgreen.png)
+
+## Website WITHOUT Macros Listed
+
+(docs/Mendocino.png)
 
 ## How it works
 
