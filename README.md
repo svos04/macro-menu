@@ -6,11 +6,11 @@ A privacy-first Chrome extension that reads restaurant menus in the browser and 
 
 ## Website WITH Macros Listed
 
-(docs/Sweetgreen.png)
+![Sweetgreen website with macros](docs/Sweetgreen.png)
 
 ## Website WITHOUT Macros Listed
 
-(docs/Mendocino.png)
+![Mendocino website without macros](docs/Mendocino.png)
 
 ## How it works
 
